@@ -43,6 +43,8 @@ type Venue struct {
 	Location Location `json:"location"`
 	Photos []Photo `json:"photos"`
 	Categories []Category `json:"categories"`
+	Rating float64 `json:"rating"`
+	Url string `json:"url"`
 }
 
 type Location struct {
@@ -61,6 +63,24 @@ type Category struct {
 type CategoryIcon struct {
 	Prefix string `json:"prefix"`
 	Suffix string `json:"suffix"`
+}
+
+type FourSquareRecommendResponse struct {
+	Response GroupResponse `json:"response"`
+}
+
+type GroupResponse struct {
+	Groups []Group `json:"groups"`
+}
+
+type Group struct {
+	Type string `json:"type"`
+	Name string `json:"name"`
+	Items []GroupItem `json:"items"`
+}
+
+type GroupItem struct {
+	Venue Venue `json:"venue"`
 }
 
 func (api *FourSquareApi) InitClient() {
@@ -89,7 +109,7 @@ func (api *FourSquareApi) GetVenue(venueId string) FourSquarePhotoResponse {
 func (api *FourSquareApi) GetVenues(query string) FourSquareResponse {
 	resp, err := api.Request.
 		SetQueryParams(map[string]string{
-		"ll": "59.93,30.31",
+		"ll": "59.93,60.00",
 		"query" : query,
 	}).Get("https://api.foursquare.com/v2/venues/search")
 
@@ -103,3 +123,25 @@ func (api *FourSquareApi) GetVenues(query string) FourSquareResponse {
 
 	return  r
 }
+
+func (api *FourSquareApi) GetRecommends(query string) FourSquareRecommendResponse {
+	resp, err := api.Request.
+		SetQueryParams(map[string]string{
+		"sw": "59.843090154492366,29.907188415527344",
+		"ne": "59.97425688709357,30.747642517089844",
+		"limit": "5",
+		"query" : query,
+	}).Get("https://api.foursquare.com/v2/venues/explore")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var r FourSquareRecommendResponse
+
+	json.Unmarshal(resp.Body(), &r)
+
+	return  r
+}
+
+
