@@ -1,1 +1,3 @@
-# foodhack_back
+# Foodini
+
+Application for https://foodhack.partiyaedi.ru
