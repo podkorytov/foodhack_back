@@ -4,12 +4,22 @@ import (
 	"github.com/podkorytov/foodhack_back/modules"
 	"github.com/joho/godotenv"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"log"
 )
 
 func GetList(c *gin.Context) {
+
+	url := c.Query("url")
+
+	if url == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Url must be set"})
+
+		return
+	}
+
 	ctx, client := modules.ConnectClient()
-	file := modules.OpenFile("http://www.navolne.life/images/201801/840423-1515788124.jpg")
+	file := modules.OpenFile(url)
 
 	vision := modules.VisionImage{
 		Client: client,
@@ -36,6 +46,7 @@ func GetList(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
+		"query" : query,
 		"data": foursquareApi.GetVenues(query),
 	})
 

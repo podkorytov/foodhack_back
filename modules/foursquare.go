@@ -3,7 +3,7 @@ package modules
 import (
 	"gopkg.in/resty.v1"
 	"fmt"
-	//"encoding/json"
+	"encoding/json"
 	"os"
 )
 
@@ -12,8 +12,28 @@ type FourSquareApi struct {
 }
 
 type FourSquareResponse struct {
-
+	Response Response `json:"response"`
 }
+
+type Response struct {
+	Venues []Venue `json:"venues"`
+}
+
+type Venue struct {
+	Id string `json:"id"`
+	Contact Contact `json:"contact"`
+	Location Location `json:"location"`
+}
+
+type Location struct {
+	FormattedAddress []string `json:"formattedAddress"`
+}
+
+type Contact struct{
+	Phone string `json:"phone"`
+}
+
+
 
 func (api *FourSquareApi) InitClient() {
 	api.Request = resty.R().SetQueryParams(map[string]string{
@@ -24,7 +44,7 @@ func (api *FourSquareApi) InitClient() {
 }
 
 
-func (api *FourSquareApi) GetVenues(query string) string {
+func (api *FourSquareApi) GetVenues(query string) FourSquareResponse {
 	resp, err := api.Request.
 		SetQueryParams(map[string]string{
 		"ll": "59.93,30.31",
@@ -37,9 +57,9 @@ func (api *FourSquareApi) GetVenues(query string) string {
 		fmt.Println(err)
 	}
 
-	//var s ApiResponse
-	//
-	//json.Unmarshal(resp.Body(), &s)
+	var r FourSquareResponse
 
-	return  resp.String()
+	json.Unmarshal(resp.Body(), &r)
+
+	return  r
 }
