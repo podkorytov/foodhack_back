@@ -130,6 +130,7 @@ func (api *FourSquareApi) GetRecommends(query string) FourSquareRecommendRespons
 		"sw": "59.843090154492366,29.907188415527344",
 		"ne": "59.97425688709357,30.747642517089844",
 		"limit": "5",
+		"locale": "ru",
 		"query" : query,
 	}).Get("https://api.foursquare.com/v2/venues/explore")
 
