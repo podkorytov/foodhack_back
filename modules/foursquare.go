@@ -42,6 +42,7 @@ type Venue struct {
 	Contact Contact `json:"contact"`
 	Location Location `json:"location"`
 	Photos []Photo `json:"photos"`
+	Categories []Category `json:"categories"`
 }
 
 type Location struct {
@@ -52,7 +53,15 @@ type Contact struct{
 	Phone string `json:"phone"`
 }
 
+type Category struct {
+	Name string `json:"name"`
+	Icon CategoryIcon `json:"icon"`
+}
 
+type CategoryIcon struct {
+	Prefix string `json:"prefix"`
+	Suffix string `json:"suffix"`
+}
 
 func (api *FourSquareApi) InitClient() {
 	api.Request = resty.R().SetQueryParams(map[string]string{
