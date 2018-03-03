@@ -51,6 +51,8 @@ func (api *GoogleTranslateApi) Translate(query string) string {
 
 	json.Unmarshal(resp.Body(), &response)
 
+	fmt.Println(resp)
+
 	if len(response.Data.Translations) > 0 {
 		return  response.Data.Translations[0].TranslatedText
 	}

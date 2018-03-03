@@ -47,9 +47,17 @@ func GetList(c *gin.Context) {
 			query = label.Label
 		}
 
+		venues := foursquareApi.GetVenues(query).Response.Venues[:5]
+
+		for i, item:= range venues {
+			photo := foursquareApi.GetVenue(item.Id)
+
+			venues[i].Photos =  photo.Response.Photos.Items
+		}
+
 		c.JSON(200, gin.H{
 			"query" : query,
-			"data": foursquareApi.GetVenues(query),
+			"data": venues,
 		})
 
 		return
