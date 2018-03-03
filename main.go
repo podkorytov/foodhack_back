@@ -2,18 +2,12 @@ package main
 
 import (
 	"CookieMonster/modules"
-	"fmt"
 	"github.com/joho/godotenv"
 	"log"
+	"github.com/gin-gonic/gin"
 )
 
-func main() {
-	err := godotenv.Load()
-
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
+func GetList(c *gin.Context) {
 	ctx, client := modules.ConnectClient()
 	file := modules.OpenFile("http://www.navolne.life/images/201801/840423-1515788124.jpg")
 
@@ -41,7 +35,22 @@ func main() {
 		query = label.Label
 	}
 
-	fmt.Println(query)
+	c.JSON(200, gin.H{
+		"data": foursquareApi.GetVenues(query),
+	})
 
-	fmt.Println(foursquareApi.GetVenues(query))
+
+}
+
+func main() {
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	r := gin.Default()
+
+	r.GET("/get-list", GetList)
+	r.Run()
 }
