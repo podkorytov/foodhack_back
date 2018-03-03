@@ -52,7 +52,7 @@ func GetList(c *gin.Context) {
 		for i, item:= range venues {
 			photo := foursquareApi.GetVenue(item.Id)
 
-			venues[i].Photos =  photo.Response.Photos.Items
+			venues[i].Photos =  photo.Response.Photos.Items[:5]
 		}
 
 		c.JSON(200, gin.H{
