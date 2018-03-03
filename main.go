@@ -1,10 +1,10 @@
 package main
 
 import (
-	"CookieMonster/modules"
+	"github.com/podkorytov/foodhack_back/modules"
 	"github.com/joho/godotenv"
-	"log"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
 func GetList(c *gin.Context) {
