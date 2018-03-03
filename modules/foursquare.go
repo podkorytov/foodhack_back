@@ -21,6 +21,7 @@ type Response struct {
 
 type Venue struct {
 	Id string `json:"id"`
+	Name string `json:"name"`
 	Contact Contact `json:"contact"`
 	Location Location `json:"location"`
 }

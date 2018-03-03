@@ -31,34 +31,38 @@ func GetList(c *gin.Context) {
 
 	foursquareApi.InitClient()
 
-	label := vision.GetLabels()[0]
+	labels := vision.GetLabels()
 
-	var googleApi modules.GoogleTranslateApi
+	if len(labels) > 0 {
+		label := labels[0]
 
-	googleApi.InitClient()
+		var googleApi modules.GoogleTranslateApi
 
-	var query string
+		googleApi.InitClient()
 
-	if label.LanguageCode != "ru" {
-		query = googleApi.Translate(label.Label)
-	} else {
-		query = label.Label
+		var query string
+
+		if label.LanguageCode != "ru" {
+			query = googleApi.Translate(label.Label)
+		} else {
+			query = label.Label
+		}
+
+		c.JSON(200, gin.H{
+			"query" : query,
+			"data": foursquareApi.GetVenues(query),
+		})
+
+		return
 	}
 
-	c.JSON(200, gin.H{
-		"query" : query,
-		"data": foursquareApi.GetVenues(query),
+	c.JSON(404, gin.H{
+		"message" : "Not found",
 	})
-
-
 }
 
 func main() {
-	err := godotenv.Load()
-
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	godotenv.Load()
 
 	r := gin.Default()
 

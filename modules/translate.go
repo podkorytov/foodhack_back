@@ -34,6 +34,8 @@ func (api *GoogleTranslateApi) InitClient() {
 
 
 func (api *GoogleTranslateApi) Translate(query string) string {
+	fmt.Println(query)
+
 	resp, err := api.Request.
 		SetQueryParams(map[string]string{
 		"q": query,
@@ -49,5 +51,9 @@ func (api *GoogleTranslateApi) Translate(query string) string {
 
 	json.Unmarshal(resp.Body(), &response)
 
-	return  response.Data.Translations[0].TranslatedText
+	if len(response.Data.Translations) > 0 {
+		return  response.Data.Translations[0].TranslatedText
+	}
+
+	return  "empty string"
 }
