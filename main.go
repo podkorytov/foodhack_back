@@ -5,7 +5,6 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"log"
 )
 
 func GetList(c *gin.Context) {
