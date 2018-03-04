@@ -5,6 +5,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"regexp"
 )
 
 func GetList(c *gin.Context) {
@@ -17,6 +18,7 @@ func GetList(c *gin.Context) {
 	}
 
 	ctx, client := modules.ConnectClient()
+
 	file := modules.OpenFile(url)
 
 	vision := modules.VisionImage{
@@ -81,6 +83,19 @@ func GetRecommends(c *gin.Context)  {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Url must be set"})
 
 		return
+	}
+
+	match, _ := regexp.MatchString(".(jpeg|jpg|gif|png)", url)
+
+	if match != true {
+		instaUrl, err := modules.GetInstaImage(url)
+		url = instaUrl
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Can't parse instagram url"})
+
+			return
+		}
 	}
 
 	ctx, client := modules.ConnectClient()
