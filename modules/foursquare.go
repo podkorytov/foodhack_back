@@ -147,6 +147,7 @@ func (api *FourSquareApi) GetRecommends(query string, ll string) FourSquareRecom
 		"limit": "100",
 		"locale": "ru",
 		"sortByDistance": "1",
+		"radius": "5000",
 		"query" : query,
 	}).Get("https://api.foursquare.com/v2/venues/explore")
 
