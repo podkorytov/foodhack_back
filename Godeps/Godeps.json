@@ -19,6 +19,16 @@
 			"Rev": "3afaae429987a1884530d6018d6e963a932d28c0"
 		},
 		{
+			"ImportPath": "github.com/PuerkitoBio/goquery",
+			"Comment": "v1.3.0",
+			"Rev": "09540e565986583836b5fc792fe951ec5fd201dd"
+		},
+		{
+			"ImportPath": "github.com/andybalholm/cascadia",
+			"Comment": "v1.0.0",
+			"Rev": "901648c87902174f774fac311d7f176f8647bdaa"
+		},
+		{
 			"ImportPath": "github.com/gin-contrib/sse",
 			"Rev": "22d885f9ecc78bf4ee5d72b937e4bbcdc58e8cae"
 		},
@@ -123,6 +133,14 @@
 		},
 		{
 			"ImportPath": "golang.org/x/net/context/ctxhttp",
+			"Rev": "22ae77b79946ea320088417e4d50825671d82d57"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html",
+			"Rev": "22ae77b79946ea320088417e4d50825671d82d57"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html/atom",
 			"Rev": "22ae77b79946ea320088417e4d50825671d82d57"
 		},
 		{
