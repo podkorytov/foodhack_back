@@ -78,6 +78,7 @@ func GetList(c *gin.Context) {
 
 func GetRecommends(c *gin.Context)  {
 	url := c.Query("url")
+	ll  := c.DefaultQuery("ll", "59.973047,30.340984")
 
 	if url == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Url must be set"})
@@ -128,7 +129,7 @@ func GetRecommends(c *gin.Context)  {
 			query = label.Label
 		}
 
-		recommends := foursquareApi.GetRecommends(query)
+		recommends := foursquareApi.GetRecommends(query, ll)
 		categories := foursquareApi.GetCategories()
 
 
