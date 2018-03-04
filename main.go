@@ -114,9 +114,18 @@ func GetRecommends(c *gin.Context)  {
 		}
 
 		recommends := foursquareApi.GetRecommends(query)
+		categories := foursquareApi.GetCategories()
+
 
 		for i, group := range recommends.Response.Groups {
-			for j, venue := range group.Items {
+
+			var items []modules.GroupItem
+
+			for _, venue := range group.Items {
+				if len(venue.Venue.Categories) == 0 {
+					items = append(items, venue)
+				}
+
 				photo := foursquareApi.GetVenue(venue.Venue.Id)
 				photos :=  photo.Response.Photos.Items
 
@@ -124,9 +133,16 @@ func GetRecommends(c *gin.Context)  {
 					photos = photos[:5]
 				}
 
-				recommends.Response.Groups[i].Items[j].Venue.Photos = photos
+				venue.Venue.Photos = photos
+
+				if len(venue.Venue.Categories) > 0 {
+					if modules.FindCategory(venue.Venue.Categories[0].Id, categories.Categories) == true {
+						items = append(items, venue)
+					}
+				}
 			}
 
+			recommends.Response.Groups[i].Items = items
 		}
 
 		c.JSON(200, gin.H{

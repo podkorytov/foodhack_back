@@ -4,6 +4,7 @@ import (
 	"gopkg.in/resty.v1"
 	"fmt"
 	"encoding/json"
+	"io/ioutil"
 	"os"
 )
 
@@ -56,8 +57,10 @@ type Contact struct{
 }
 
 type Category struct {
+	Id string `json:"id"`
 	Name string `json:"name"`
 	Icon CategoryIcon `json:"icon"`
+	Categories []Category `json:"categories"`
 }
 
 type CategoryIcon struct {
@@ -129,7 +132,7 @@ func (api *FourSquareApi) GetRecommends(query string) FourSquareRecommendRespons
 		SetQueryParams(map[string]string{
 		"sw": "59.843090154492366,29.907188415527344",
 		"ne": "59.97425688709357,30.747642517089844",
-		"limit": "5",
+		"limit": "50",
 		"locale": "ru",
 		"query" : query,
 	}).Get("https://api.foursquare.com/v2/venues/explore")
@@ -143,6 +146,45 @@ func (api *FourSquareApi) GetRecommends(query string) FourSquareRecommendRespons
 	json.Unmarshal(resp.Body(), &r)
 
 	return  r
+}
+
+
+func (api *FourSquareApi) GetCategories() Category {
+	file, e := ioutil.ReadFile("./synthetic_db/categories.json")
+
+	if e != nil {
+		fmt.Printf("File error: %v\n", e)
+		os.Exit(1)
+	}
+
+	var categories Category
+
+	err := json.Unmarshal(file, &categories)
+
+	if err != nil {
+		fmt.Printf("File error: %v\n", e)
+		os.Exit(1)
+	}
+
+	return  categories
+}
+
+func FindCategory(categoryId string, categories []Category) bool  {
+	for _,category := range categories  {
+		if category.Id == categoryId {
+			return  true
+		}
+
+		if len(category.Categories) > 0 {
+			found := FindCategory(categoryId, category.Categories)
+
+			if found == true {
+				return  found
+			}
+		}
+	}
+
+	return  false
 }
 
 
