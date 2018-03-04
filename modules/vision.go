@@ -9,6 +9,7 @@ import (
 	"golang.org/x/net/context"
 	"io"
 	vision2 "google.golang.org/genproto/googleapis/cloud/vision/v1"
+	"fmt"
 )
 
 type VisionImage struct {
@@ -40,13 +41,13 @@ func (i VisionImage) GetAllLabels() []*vision2.EntityAnnotation  {
 	image, err := vision.NewImageFromReader(i.Reader)
 
 	if err != nil {
-		log.Fatalf("Failed to create image: %v", err)
+		fmt.Println("Failed to create image: %v", err)
 	}
 
 	detect, err := i.Client.DetectLabels(i.Context, image, nil, 10)
 
 	if err != nil {
-		log.Fatalf("Failed to detect labels: %v", err)
+		fmt.Println("Failed to detect labels: %v", err)
 	}
 
 	return detect
