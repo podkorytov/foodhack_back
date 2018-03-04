@@ -145,7 +145,7 @@ func (api *FourSquareApi) GetRecommends(query string) FourSquareRecommendRespons
 		SetQueryParams(map[string]string{
 		"sw": "59.843090154492366,29.907188415527344",
 		"ne": "59.97425688709357,30.747642517089844",
-		"limit": "50",
+		"limit": "100",
 		"locale": "ru",
 		"sortByDistance": "1",
 		"query" : query,
