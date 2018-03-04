@@ -86,6 +86,17 @@ type GroupItem struct {
 	Venue Venue `json:"venue"`
 }
 
+func (groupItem *GroupItem) GetPhotos(api FourSquareApi) []Photo   {
+	photo := api.GetVenue(groupItem.Venue.Id)
+	photos :=  photo.Response.Photos.Items
+
+	if len(photos) > 5 {
+		photos = photos[:5]
+	}
+
+	return photos
+}
+
 func (api *FourSquareApi) InitClient() {
 	api.Request = resty.R().SetQueryParams(map[string]string{
 		"client_id": os.Getenv("API_FOURSQUARE_CLIENT_ID"),
@@ -132,7 +143,7 @@ func (api *FourSquareApi) GetRecommends(query string) FourSquareRecommendRespons
 		SetQueryParams(map[string]string{
 		"sw": "59.843090154492366,29.907188415527344",
 		"ne": "59.97425688709357,30.747642517089844",
-		"limit": "50",
+		"limit": "20",
 		"locale": "ru",
 		"query" : query,
 	}).Get("https://api.foursquare.com/v2/venues/explore")

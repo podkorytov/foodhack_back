@@ -126,20 +126,19 @@ func GetRecommends(c *gin.Context)  {
 					items = append(items, venue)
 				}
 
-				photo := foursquareApi.GetVenue(venue.Venue.Id)
-				photos :=  photo.Response.Photos.Items
-
-				if len(photos) > 5 {
-					photos = photos[:5]
-				}
-
-				venue.Venue.Photos = photos
-
 				if len(venue.Venue.Categories) > 0 {
 					if modules.FindCategory(venue.Venue.Categories[0].Id, categories.Categories) == true {
 						items = append(items, venue)
 					}
 				}
+			}
+
+			if len(items) > 5 {
+				items = items[:5]
+			}
+
+			for i, item := range items {
+				items[i].Venue.Photos = item.GetPhotos(foursquareApi)
 			}
 
 			recommends.Response.Groups[i].Items = items
