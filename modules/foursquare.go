@@ -143,8 +143,7 @@ func (api *FourSquareApi) GetVenues(query string) FourSquareResponse {
 func (api *FourSquareApi) GetRecommends(query string) FourSquareRecommendResponse {
 	resp, err := api.Request.
 		SetQueryParams(map[string]string{
-		"sw": "59.843090154492366,29.907188415527344",
-		"ne": "59.97425688709357,30.747642517089844",
+		"ll": "59.973047,30.340984",
 		"limit": "100",
 		"locale": "ru",
 		"sortByDistance": "1",
