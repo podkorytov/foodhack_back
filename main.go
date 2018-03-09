@@ -8,7 +8,7 @@ import (
 	"regexp"
 )
 
-func GetList(c *gin.Context) {
+func GetUrl(c *gin.Context) {
 	url := c.Query("url")
 
 	if url == "" {
@@ -17,63 +17,20 @@ func GetList(c *gin.Context) {
 		return
 	}
 
-	ctx, client := modules.ConnectClient()
+	match, _ := regexp.MatchString(".(jpeg|jpg|gif|png)", url)
 
-	file := modules.OpenFile(url)
+	if match != true {
+		instaUrl, err := modules.GetInstaImage(url)
+		url = instaUrl
 
-	vision := modules.VisionImage{
-		Client:  client,
-		Context: ctx,
-		Reader:  file,
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Can't parse instagram url"})
+
+			return
+		}
 	}
 
-	var foursquareApi modules.FourSquareApi
-
-	foursquareApi.InitClient()
-
-	labels := vision.GetLabels()
-
-	if len(labels) > 0 {
-		label := labels[0]
-
-		var googleApi modules.GoogleTranslateApi
-
-		googleApi.InitClient()
-
-		var query string
-
-		if label.LanguageCode != "ru" {
-			query = googleApi.Translate(label.Label)
-		} else {
-			query = label.Label
-		}
-
-		venues := foursquareApi.GetVenues(query).Response.Venues
-
-		if len(venues) > 5 {
-			venues = venues[:5]
-		}
-
-		for i, item := range venues {
-			photo := foursquareApi.GetVenue(item.Id)
-			items := photo.Response.Photos.Items
-
-			if len(items) > 5 {
-				venues[i].Photos = items[:5]
-			}
-		}
-
-		c.JSON(200, gin.H{
-			"query": query,
-			"data":  venues,
-		})
-
-		return
-	}
-
-	c.JSON(404, gin.H{
-		"message": "Not found",
-	})
+	c.JSON(http.StatusOK, gin.H{"url": url})
 }
 
 func GetRecommends(c *gin.Context) {
@@ -177,7 +134,7 @@ func main() {
 
 	r := gin.Default()
 
-	r.GET("/get-list", GetList)
 	r.GET("/get-recommends", GetRecommends)
+	r.GET("/get-url", GetUrl)
 	r.Run()
 }
