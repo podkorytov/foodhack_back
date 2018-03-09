@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/podkorytov/foodhack_back/modules"
-	"github.com/joho/godotenv"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	"github.com/podkorytov/foodhack_back/modules"
 	"net/http"
 	"regexp"
 )
@@ -22,9 +22,9 @@ func GetList(c *gin.Context) {
 	file := modules.OpenFile(url)
 
 	vision := modules.VisionImage{
-		Client: client,
+		Client:  client,
 		Context: ctx,
-		Reader: file,
+		Reader:  file,
 	}
 
 	var foursquareApi modules.FourSquareApi
@@ -54,7 +54,7 @@ func GetList(c *gin.Context) {
 			venues = venues[:5]
 		}
 
-		for i, item:= range venues {
+		for i, item := range venues {
 			photo := foursquareApi.GetVenue(item.Id)
 			items := photo.Response.Photos.Items
 
@@ -64,21 +64,21 @@ func GetList(c *gin.Context) {
 		}
 
 		c.JSON(200, gin.H{
-			"query" : query,
-			"data": venues,
+			"query": query,
+			"data":  venues,
 		})
 
 		return
 	}
 
 	c.JSON(404, gin.H{
-		"message" : "Not found",
+		"message": "Not found",
 	})
 }
 
-func GetRecommends(c *gin.Context)  {
+func GetRecommends(c *gin.Context) {
 	url := c.Query("url")
-	ll  := c.DefaultQuery("ll", "59.973047,30.340984")
+	ll := c.DefaultQuery("ll", "59.973047,30.340984")
 
 	if url == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Url must be set"})
@@ -103,9 +103,9 @@ func GetRecommends(c *gin.Context)  {
 	file := modules.OpenFile(url)
 
 	vision := modules.VisionImage{
-		Client: client,
+		Client:  client,
 		Context: ctx,
-		Reader: file,
+		Reader:  file,
 	}
 
 	var foursquareApi modules.FourSquareApi
@@ -131,7 +131,6 @@ func GetRecommends(c *gin.Context)  {
 
 		recommends := foursquareApi.GetRecommends(query, ll)
 		categories := foursquareApi.GetCategories()
-
 
 		for i, group := range recommends.Response.Groups {
 
@@ -161,15 +160,15 @@ func GetRecommends(c *gin.Context)  {
 		}
 
 		c.JSON(200, gin.H{
-			"query" : query,
-			"data": recommends,
+			"query": query,
+			"data":  recommends,
 		})
 
 		return
 	}
 
 	c.JSON(404, gin.H{
-		"message" : "Not found",
+		"message": "Not found",
 	})
 }
 

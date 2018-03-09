@@ -1,9 +1,9 @@
 package modules
 
 import (
-	"gopkg.in/resty.v1"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"gopkg.in/resty.v1"
 	"io/ioutil"
 	"os"
 )
@@ -38,31 +38,31 @@ type Response struct {
 }
 
 type Venue struct {
-	Id string `json:"id"`
-	Name string `json:"name"`
-	Contact Contact `json:"contact"`
-	Location Location `json:"location"`
-	Photos []Photo `json:"photos"`
+	Id         string     `json:"id"`
+	Name       string     `json:"name"`
+	Contact    Contact    `json:"contact"`
+	Location   Location   `json:"location"`
+	Photos     []Photo    `json:"photos"`
 	Categories []Category `json:"categories"`
-	Rating float64 `json:"rating"`
-	Url string `json:"url"`
+	Rating     float64    `json:"rating"`
+	Url        string     `json:"url"`
 }
 
 type Location struct {
 	FormattedAddress []string `json:"formattedAddress"`
-	Lat float64 `json:"lat"`
-	Lng float64 `json:"lng"`
+	Lat              float64  `json:"lat"`
+	Lng              float64  `json:"lng"`
 }
 
-type Contact struct{
+type Contact struct {
 	Phone string `json:"phone"`
 }
 
 type Category struct {
-	Id string `json:"id"`
-	Name string `json:"name"`
-	Icon CategoryIcon `json:"icon"`
-	Categories []Category `json:"categories"`
+	Id         string       `json:"id"`
+	Name       string       `json:"name"`
+	Icon       CategoryIcon `json:"icon"`
+	Categories []Category   `json:"categories"`
 }
 
 type CategoryIcon struct {
@@ -79,8 +79,8 @@ type GroupResponse struct {
 }
 
 type Group struct {
-	Type string `json:"type"`
-	Name string `json:"name"`
+	Type  string      `json:"type"`
+	Name  string      `json:"name"`
 	Items []GroupItem `json:"items"`
 }
 
@@ -88,9 +88,9 @@ type GroupItem struct {
 	Venue Venue `json:"venue"`
 }
 
-func (groupItem *GroupItem) GetPhotos(api FourSquareApi) []Photo   {
+func (groupItem *GroupItem) GetPhotos(api FourSquareApi) []Photo {
 	photo := api.GetVenue(groupItem.Venue.Id)
-	photos :=  photo.Response.Photos.Items
+	photos := photo.Response.Photos.Items
 
 	if len(photos) > 5 {
 		photos = photos[:5]
@@ -101,15 +101,14 @@ func (groupItem *GroupItem) GetPhotos(api FourSquareApi) []Photo   {
 
 func (api *FourSquareApi) InitClient() {
 	api.Request = resty.R().SetQueryParams(map[string]string{
-		"client_id": os.Getenv("API_FOURSQUARE_CLIENT_ID"),
+		"client_id":     os.Getenv("API_FOURSQUARE_CLIENT_ID"),
 		"client_secret": os.Getenv("API_FOURSQUARE_CLIENT_SECRET"),
-		"v" : "20170801",
+		"v":             "20170801",
 	}).SetHeader("Accept", "application/json")
 }
 
-
 func (api *FourSquareApi) GetVenue(venueId string) FourSquarePhotoResponse {
-	resp, err := api.Request.Get("https://api.foursquare.com/v2/venues/"+venueId+"/photos")
+	resp, err := api.Request.Get("https://api.foursquare.com/v2/venues/" + venueId + "/photos")
 
 	if err != nil {
 		fmt.Println(err)
@@ -119,15 +118,15 @@ func (api *FourSquareApi) GetVenue(venueId string) FourSquarePhotoResponse {
 
 	json.Unmarshal(resp.Body(), &r)
 
-	return  r
+	return r
 }
 
 func (api *FourSquareApi) GetVenues(query string) FourSquareResponse {
 	resp, err := api.Request.
 		SetQueryParams(map[string]string{
-		"ll": "59.93,60.00",
-		"query" : query,
-	}).Get("https://api.foursquare.com/v2/venues/search")
+			"ll":    "59.93,60.00",
+			"query": query,
+		}).Get("https://api.foursquare.com/v2/venues/search")
 
 	if err != nil {
 		fmt.Println(err)
@@ -137,19 +136,19 @@ func (api *FourSquareApi) GetVenues(query string) FourSquareResponse {
 
 	json.Unmarshal(resp.Body(), &r)
 
-	return  r
+	return r
 }
 
 func (api *FourSquareApi) GetRecommends(query string, ll string) FourSquareRecommendResponse {
 	resp, err := api.Request.
 		SetQueryParams(map[string]string{
-		"ll": ll,
-		"limit": "100",
-		"locale": "ru",
-		"sortByDistance": "1",
-		"radius": "5000",
-		"query" : query,
-	}).Get("https://api.foursquare.com/v2/venues/explore")
+			"ll":             ll,
+			"limit":          "100",
+			"locale":         "ru",
+			"sortByDistance": "1",
+			"radius":         "5000",
+			"query":          query,
+		}).Get("https://api.foursquare.com/v2/venues/explore")
 
 	if err != nil {
 		fmt.Println(err)
@@ -159,9 +158,8 @@ func (api *FourSquareApi) GetRecommends(query string, ll string) FourSquareRecom
 
 	json.Unmarshal(resp.Body(), &r)
 
-	return  r
+	return r
 }
-
 
 func (api *FourSquareApi) GetCategories() Category {
 	file, e := ioutil.ReadFile("./synthetic_db/categories.json")
@@ -180,25 +178,23 @@ func (api *FourSquareApi) GetCategories() Category {
 		os.Exit(1)
 	}
 
-	return  categories
+	return categories
 }
 
-func FindCategory(categoryId string, categories []Category) bool  {
-	for _,category := range categories  {
+func FindCategory(categoryId string, categories []Category) bool {
+	for _, category := range categories {
 		if category.Id == categoryId {
-			return  true
+			return true
 		}
 
 		if len(category.Categories) > 0 {
 			found := FindCategory(categoryId, category.Categories)
 
 			if found == true {
-				return  found
+				return found
 			}
 		}
 	}
 
-	return  false
+	return false
 }
-
-

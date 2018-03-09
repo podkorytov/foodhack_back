@@ -1,11 +1,11 @@
 package modules
 
 import (
-	"github.com/PuerkitoBio/goquery"
 	"errors"
+	"github.com/PuerkitoBio/goquery"
 )
 
-func GetInstaImage(link string) (string, error)  {
+func GetInstaImage(link string) (string, error) {
 	doc, _ := goquery.NewDocument(link)
 	item := ""
 
@@ -19,7 +19,7 @@ func GetInstaImage(link string) (string, error)  {
 	})
 
 	if item != "" {
-		return  item, nil
+		return item, nil
 	}
 
 	return "", errors.New("can't parse url")
