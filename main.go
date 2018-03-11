@@ -129,10 +129,26 @@ func GetRecommends(c *gin.Context) {
 	})
 }
 
+func AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authorization := c.GetHeader("Authorization")
+
+		if authorization != "SWdlvJ8O9FqwvHpN" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token is not valid"})
+
+			c.Abort()
+		}
+
+		c.Next()
+	}
+}
+
 func main() {
 	godotenv.Load()
 
 	r := gin.Default()
+
+	r.Use(AuthMiddleware())
 
 	r.GET("/get-recommends", GetRecommends)
 	r.GET("/get-url", GetUrl)
